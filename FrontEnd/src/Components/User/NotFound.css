@@ -1,0 +1,58 @@
+.not-found-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+    width: 100vw;  /* Full viewport width */
+    background-color: #f8f9fa; /* Light background color */
+    font-family: 'Arial', sans-serif;
+}
+
+.not-found-content {
+    text-align: center;
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1s ease-in-out;
+    max-width: 90%; /* Ensuring responsiveness */
+}
+
+.not-found-title {
+    font-size: 3rem;
+    color: #dc3545; /* Red color for emphasis */
+    margin-bottom: 20px;
+}
+
+.not-found-message {
+    font-size: 1.2rem;
+    color: #6c757d; /* Gray color for the message */
+    margin-bottom: 30px;
+}
+
+.not-found-button {
+    background-color: #007bff; /* Blue color for the button */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.not-found-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

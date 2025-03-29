@@ -1,5 +1,5 @@
-import Customer from "../../models/customerModel";
-import { ICustomer } from "../entities/ICustomer";
+import Customer from "../model/mongoDB/customerModel";
+import { ICustomer } from "../../../domain/entities/ICustomer";
 import { v4 as uuidv4 } from 'uuid';
 
 export class CustomerRepository {

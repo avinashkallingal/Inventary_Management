@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { IUserModel } from '../domain/entities/IAuth';
+import { IUserModel } from '../../../../domain/entities/IAuth';
 
 export interface IUserDocument extends IUserModel, Document { }
 

@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'
-import User from "../../models/userModel";
-import { IUser } from "../entities/IAuth";
-import { Avatar, ResetPassword } from "../entities/Iuser";
+import User from "../../../infrastructure/persistance/model/mongoDB/userModel";
+import { IUser } from "../../../domain/entities/IAuth";
+import { Avatar, ResetPassword } from "../../../domain/entities/Iuser";
 
 
 export class UserRepository {

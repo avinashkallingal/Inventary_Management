@@ -1,5 +1,5 @@
-import Order from "../../models/orderModel";
-import { IOrder } from "../entities/IOrder";
+import Order from "../model/mongoDB/orderModel";
+import { IOrder } from "../../../domain/entities/IOrder";
 import { v4 as uuidv4 } from 'uuid';
 
 export class OrderRepository {

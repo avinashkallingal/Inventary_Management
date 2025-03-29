@@ -1,5 +1,5 @@
 import express from 'express';
-import upload from '../../utils/multer';
+import upload from '../../application/services/upload/multer';
 import { itemController } from '../controllers/itemController';
 import authMiddleware from '../middlewares/Aurh';
 

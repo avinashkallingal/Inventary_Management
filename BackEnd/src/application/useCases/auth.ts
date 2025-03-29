@@ -1,21 +1,24 @@
 import { ILogin, IUser } from "../../domain/entities/IAuth";
-import { AuthRepository } from "../../domain/repositories/authRepository";
-import { UserRepository } from "../../domain/repositories/userRepositoty";
-import { generateToken } from "../../jwt/jwtCreate";
-import { sendEmailVerification, sendForgotPasswordEmail } from "../../utils/email";
+import { AuthRepository } from "../../infrastructure/persistance/repository/authRepository";
+import { UserRepository } from "../../infrastructure/persistance/repository/userRepositoty";
+import { IAuthService } from "../../domain/services/IAuthService";
+import { Ijwt } from "../../domain/utils/Ijwt";
+import { sendEmailVerification, sendForgotPasswordEmail } from "../../application/services/email/email";
 import bcrypt from 'bcrypt';
 
-export class AuthService {
+export class AuthService implements IAuthService{
     private authRepo: AuthRepository
     private userRepo: UserRepository
+    private jwt: Ijwt
 
-    constructor() {
+    constructor(jwt:Ijwt) {
+        this.jwt = jwt
         this.authRepo = new AuthRepository();
         this.userRepo = new UserRepository();
     }
 
     // creating temp user and sending an email to the user for verfication.
-    async register(data: IUser) {
+    async register(data: IUser) : Promise<{success:boolean, message: string, user?: IUser}> {
         try {
             const email: string = data.email;
 
@@ -52,9 +55,9 @@ export class AuthService {
     }
 
     // verifying the email and creating new user 
-    async verifyEmail(id: string) {
+    async verifyEmail(id: string) :Promise<{success: boolean, message: string, user?: IUser}> {
         try {
-            const tempUserFound:any = await this.authRepo.findTempUser(id);
+            const tempUserFound:any = await this.authRepo.findTempUserById(id);
             console.log(tempUserFound,id," temp user found id in verify email and id 5555555555")
             if (!tempUserFound) {
                 return { success: false, message: 'Register again' };
@@ -85,7 +88,7 @@ export class AuthService {
         }
     }
 
-    async login(data: ILogin) {
+    async login(data: ILogin) :Promise<{success:boolean, message: string, token?:{accessToken:string,refreshToken:string}, userData?: Partial<IUser>}> {
         try {
             const { email, password } = data
             const userFound = await this.authRepo.findByEmail(email);
@@ -97,15 +100,15 @@ export class AuthService {
             if (!passwordMatch) {
                 return { success: false, message: 'Invalid Email or Password' }
             }
-            const token = await generateToken({ id: userFound._id.toString(), email: userFound.email });
+            const token = await this.jwt.generateToken({ id: userFound._id?.toString() || "", email: userFound.email });
 
             const userData = {
                 id: userFound._id,
                 email: userFound.email,
                 name: userFound.username,
                 phone: userFound.phone,
-                avatar: userFound.avatar,
-                bio: userFound.bio
+                avatar: userFound.avatar || "",
+                bio: userFound.bio || ""
             }
             return { success: true, message: "login in successful", token, userData }
 
@@ -115,7 +118,7 @@ export class AuthService {
         }
     }
 
-    async forgetPassword(email: string) {
+    async forgetPassword(email: string): Promise<{success:boolean, message:string}>{
         try {
             const userFound = await this.authRepo.findByEmail(email);
             if (userFound) {
@@ -139,7 +142,7 @@ export class AuthService {
         }
     }
 
-    async setFortgotPassword(pass: string, email: string) {
+    async setFortgotPassword(pass: string, email: string) :Promise<{success:boolean,message:string}> {
         try {
             console.log(email)
             const userFound = await this.authRepo.findByEmail(email);

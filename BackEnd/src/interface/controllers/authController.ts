@@ -1,12 +1,14 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { AuthService } from "../../app/useCases/auth";
+import { AuthService } from "../../application/useCases/auth";
 import config from "../../infrastructure/config/config";
+import { IAuthService } from "../../domain/services/IAuthService";
 
-class AuthController {
-  private authService: AuthService;
-  constructor() {
-    this.authService = new AuthService();
+export class AuthController {
+  private authService: IAuthService;
+  
+  constructor(authService: IAuthService) {
+    this.authService = authService
   }
 
   // verify no user exist, creatinga temp user and sending an email for verification.
@@ -146,4 +148,4 @@ class AuthController {
   };
 }
 
-export const authController = new AuthController();
+// export const authController = new AuthController();

@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv'
 import authRouter from '../../interface/routes/authRoutes';
-import { dbConnection } from '../database/dbConnection';
+import { dbConnection } from '../config/database/dbConnection';
 // import userRouter from '../../interface/routes/userRoutes';
 import itemRouter from '../../interface/routes/itemRoute';
 import customerRouter from '../../interface/routes/customerRoute';

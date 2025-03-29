@@ -1,41 +1,46 @@
-import { ICustomer } from "../../domain/entities/ICustomer";
-import { CustomerRepository } from "../../domain/repositories/customerRepository";
-import uploadImage from "../../utils/upload";
+import { AddItem } from "../../domain/entities/IItems";
+import { ItemRepository } from "../../infrastructure/persistance/repository/itemRepository";
+import uploadImage from "../../application/services/upload/upload";
 
 
 
-export class CustomerService {
-    private customerRepo: CustomerRepository
+export class ItemService {
+    private itemRepo: ItemRepository
 
     constructor() {
-        this.customerRepo = new CustomerRepository();
+        this.itemRepo = new ItemRepository();
     }
 
-    async AddCustomer(data: ICustomer) {
+    async AddItem(data: AddItem, file: Express.Multer.File | undefined) {
         try {
-            
-           
-                const result = await this.customerRepo.addCustomer(data);
+            const imageUpload = await uploadImage(file);
+            if (imageUpload) {
+                const result = await this.itemRepo.addItem(imageUpload, data);
                 if (result) {
-                    return { success: true, message: 'Customer successfully created.' };
+                    return { success: true, message: 'Blog successfully created.' };
                 } else {
                     return { success: false, message: 'Blog creation failed. Please try again later.' };
                 }
-           
+            } else {
+                return { success: false, message: 'Image upload failed. Please try again later.' };
+            }
         } catch (error) {
             console.error('Error in AddItem:', error);
             return { success: false, message: 'An unexpected error occurred. Please try again later.' };
         }
     }
 
-    async editCustomer(data: ICustomer) {
+    async editBlog(data: AddItem, file: Express.Multer.File | undefined) {
         try {
-         
-            const result = await this.customerRepo.editCustomer(data);
+            let imageUpload = null;
+            if (file) {
+                imageUpload = await uploadImage(file);
+            }
+            const result = await this.itemRepo.editBlog(data, imageUpload);
             if (result.success) {
-                return { success: true, message: 'customer successfully edited.' };
+                return { success: true, message: 'Blog successfully edited.' };
             } else {
-                return { success: false, message: 'customer edit failed. Please try again later.' };
+                return { success: false, message: 'Blog edit failed. Please try again later.' };
             }
         } catch (error) {
             console.error('Error in editBlog:', error);
@@ -43,24 +48,11 @@ export class CustomerService {
         }
     }
 
-    async deleteCustomer(customerId: string) {
+    async getItems() {
         try {
-            const result = await this.customerRepo.deleteCustomer(customerId);
-            if (result.acknowledged) {
-                return { success: true, message: 'Blog deleted successful', data: result }
-            }
-            return { success: false, message: 'Failed to delete user Blog.' };
-        } catch (error) {
-            console.error('Error in deleteBlog:', error);
-            return { success: false, message: 'An unexpected error occurred. Please try again later.' };
-        }
-    }
-
-    async getCustomers() {
-        try {
-            const result = await this.customerRepo.getCustomers()
+            const result = await this.itemRepo.getItems()
             if (result) {
-                return { success: true, message: 'Blog details fetched successful', customerData: result }
+                return { success: true, message: 'Blog details fetched successful', itemData: result }
             }
             return { success: false, message: 'Failed to fect Blog data.' };
         } catch (error) {
@@ -69,11 +61,11 @@ export class CustomerService {
         }
     }
 
-    async getCustomer(customerId:string) {
+    async getItem(itemId:string) {
         try {
-            const result = await this.customerRepo.getCustomer(customerId)
+            const result = await this.itemRepo.getItem(itemId)
             if (result) {
-                return { success: true, message: 'Blog details fetched successful', customerData: result }
+                return { success: true, message: 'Blog details fetched successful', itemData: result }
             }
             return { success: false, message: 'Failed to fect Blog data.' };
         } catch (error) {
@@ -82,11 +74,9 @@ export class CustomerService {
         }
     }
 
-    
-
-    async searchCustomers(data:string) {
+    async searchItems(data:string) {
         try {
-            const result = await this.customerRepo.searchCustomers(data)
+            const result = await this.itemRepo.searchItems(data)
             if (result) {
                 return { success: true, message: 'Customer search details fetched successful', customerData: result }
             }
@@ -123,6 +113,17 @@ export class CustomerService {
     //     }
     // }
 
-
+    async deleteItem(itemId: string) {
+        try {
+            const result = await this.itemRepo.deleteItem(itemId);
+            if (result.acknowledged) {
+                return { success: true, message: 'Item deleted successful', data: result }
+            }
+            return { success: false, message: 'Failed to delete item.' };
+        } catch (error) {
+            console.error('Error in deleteItem:', error);
+            return { success: false, message: 'An unexpected error occurred. Please try again later.' };
+        }
+    }
 
 }

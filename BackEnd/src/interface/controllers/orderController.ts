@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { OrderService } from '../../app/useCases/order';
+import { OrderService } from '../../application/useCases/order';
 
 class OrderController {
     private OrderService: OrderService;

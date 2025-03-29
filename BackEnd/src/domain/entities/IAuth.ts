@@ -1,3 +1,5 @@
+import mongoose from "mongoose"
+
 export interface IUserModel {
     username: string,
     phone: string,
@@ -10,6 +12,7 @@ export interface IUserModel {
 }
 
 export interface IUser {
+    _id?: mongoose.Types.ObjectId,
     username: string,
     phone: string,
     email: string,

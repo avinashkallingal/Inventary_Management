@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import config from '../infrastructure/config/config';
+import config from '../../../infrastructure/config/config';
 
 import dotenv from 'dotenv'
 dotenv.config();

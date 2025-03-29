@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ItemService } from '../../app/useCases/item';
+import { ItemService } from '../../application/useCases/item';
 
 class ItemController {
     private ItemService: ItemService;

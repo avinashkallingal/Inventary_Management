@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { ReportService } from '../../app/useCases/report';
-import { sendEmailWithAttachment } from "../../utils/exportMailer";
+import { ReportService } from '../../application/useCases/report';
+import { sendEmailWithAttachment } from "../../application/services/email/exportMailer";
 
 class ReportController {
     private ReportService: ReportService;

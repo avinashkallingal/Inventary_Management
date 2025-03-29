@@ -1,6 +1,6 @@
 import { IOrder } from "../../domain/entities/IOrder";
-import { ReportRepository } from "../../domain/repositories/reportRepository";
-import uploadImage from "../../utils/upload";
+import { ReportRepository } from "../../infrastructure/persistance/repository/reportRepository";
+import uploadImage from "../../application/services/upload/upload";
 
 
 

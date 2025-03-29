@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { CustomerService } from '../../app/useCases/customer';
+import { CustomerService } from '../../application/useCases/customer';
 
 class CustomerController {
     private CustomerService: CustomerService;

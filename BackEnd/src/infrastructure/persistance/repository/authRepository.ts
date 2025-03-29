@@ -1,14 +1,17 @@
 import bcrypt from 'bcrypt'
-import TempUserModel from "../../models/tempUserModel";
-import User from "../../models/userModel";
-import { IUser } from "../entities/IAuth";
+import TempUserModel from "../../persistance/model/mongoDB/tempUserModel";
+import User from "../../persistance/model/mongoDB/userModel";
+import { IUser } from "../../../domain/entities/IAuth";
 
 export class AuthRepository {
 
     // while registering checking if an email is present or not
-    async findByEmail(email: string) {
+    async findByEmail(email: string) :Promise<IUser | false>{
         try {
             const result = await User.findOne({ email: email });
+            if(!result){
+                return false
+            }
             return result;
         } catch (error) {
             console.error('Error finding user by email:', error);
@@ -17,12 +20,22 @@ export class AuthRepository {
     }
 
     // while registering checking if an email is present or not
-    async findTempUser(id: string) {
+    async findTempUser(email: string) {
         try {
             // const result = await TempUserModel.findOne({ email: id });
-            const result = await TempUserModel.findOne({
-                $or: [{ email: id || null }, { _id: id || null }]
-              });
+            const result = await TempUserModel.findOne({ email: email || null });
+              
+            return result;
+        } catch (error) {
+            console.error('Error finding user by id:', error);
+            throw new Error('An error occurred while searching for the user. Please try again later.');
+        }
+    }
+
+    async findTempUserById(id: string) {
+        try {
+            // const result = await TempUserModel.findOne({ email: id });
+            const result = await TempUserModel.findOne({ _id: id || null });
               
             return result;
         } catch (error) {
@@ -84,7 +97,7 @@ export class AuthRepository {
         }
     }
 
-    async resetPassword(password: string, email: string) {
+    async resetPassword(password: string, email: string) :Promise<{success:boolean, message:string}>{
         try {
             const result = await User.updateOne({ email: email }, { $set: { password: password } });
             if (result.modifiedCount == 1) {

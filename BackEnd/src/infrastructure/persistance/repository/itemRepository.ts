@@ -1,5 +1,5 @@
-import Item from "../../models/itemModel";
-import { AddItem } from "../entities/IItems";
+import Item from "../../persistance/model/mongoDB/itemModel";
+import { AddItem } from "../../../domain/entities/IItems";
 import { v4 as uuidv4 } from 'uuid';
 
 export class ItemRepository {

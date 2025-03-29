@@ -15,5 +15,8 @@ authRouter.post('/login', authController.login.bind(authController))
 authRouter.post('/forgetPassword',authController.forgetPassword.bind(authController));
 authRouter.put('/setFortgotPassword/:id',authController.setFortgotPassword.bind(authController));
 authRouter.post('/refresh-token', authController.refreshToken.bind(authController))
+authRouter.get('/health', (req,res)=>{
+res.status(200).json({success:"true"})
+})
 
 export default authRouter

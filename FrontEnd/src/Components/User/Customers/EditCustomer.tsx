@@ -10,14 +10,13 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { CustomerEndpoints } from "../../../Constraints/Endpoints/CustomerEndpoints";
-import { ICustomer } from "../../../Interfaces/ICustomer";
+// import { ICustomer } from "../../../Interfaces/ICustomer";
 import Navbar from "../Navbar";
 import { toast } from "sonner";
 
 const EditCustomer: React.FC = () => {
   const navigate = useNavigate();
   const { customerId } = useParams<{ customerId: string }>();
-  const [customer, setCustomer] = useState<ICustomer | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
   const [formData, setFormData] = useState({
@@ -40,7 +39,7 @@ const EditCustomer: React.FC = () => {
         console.log(response.data," response of get customers")
         if (response.data.success) {
             
-          setCustomer(response.data.data[0]);
+
           setFormData(response.data.data[0]); // Set form data from fetched data
         } else {
           toast.error("Failed to load customer details.");

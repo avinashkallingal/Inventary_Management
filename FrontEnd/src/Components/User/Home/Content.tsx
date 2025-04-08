@@ -5,7 +5,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import axios from "axios";
 import { userEndpoints } from "../../../Constraints/Endpoints/UserEndPoints";
 import IItem from "../../../Interfaces/IItem";
-import { toast } from "sonner";
+
 import Swal from "sweetalert2";
 
 const Content: React.FC = () => {
@@ -14,12 +14,15 @@ const Content: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+    const [loading,setLoading]=useState<boolean>(true)
 
   useEffect(() => {
     async function dataFetch() {
+      setLoading(true)
       const result = await axios.get(userEndpoints.getItems);
       if (result.data.success) {
         setItems(result.data.data);
+        setLoading(false)
       }
     }
     dataFetch();
@@ -97,7 +100,7 @@ const Content: React.FC = () => {
     handleMenuClose();
   };
 
-  return (
+  return (loading?<><h1>Loading data.....</h1></>:(
     <Box sx={{ display: "flex", flexDirection: "column", padding: 3, minWidth: "75vw" }}>
       {/* Header Section */}
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
@@ -175,7 +178,7 @@ const Content: React.FC = () => {
         <MenuItem onClick={handleDelete}>Delete Item</MenuItem>
       </Menu>
     </Box>
-  );
+  ));
 };
 
 export default Content;

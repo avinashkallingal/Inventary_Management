@@ -30,12 +30,15 @@ const CustomerManagement: React.FC = () => {
   const [selectedCustomer, setSelectedCustomer] = useState<ICustomer | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
+    const [loading,setLoading]=useState<boolean>(true)
 
   useEffect(() => {
     async function fetchData() {
+      setLoading(true)
       const result = await axios.get(CustomerEndpoints.getCustomers);
       if (result.data.success) {
         setCustomers(result.data.data);
+        setLoading(false)
       }
     }
     fetchData();
@@ -108,7 +111,7 @@ const CustomerManagement: React.FC = () => {
     setSelectedCustomer(null);
   };
 
-  return (
+  return (loading?<><h1>Loading data.....</h1></>:(
     <Box sx={{ display: "flex", flexDirection: "column", padding: 3, minWidth: "75vw",marginTop:"-30vh" }}>
       {/* Header Section */}
       <Navbar/>
@@ -193,7 +196,7 @@ const CustomerManagement: React.FC = () => {
         <MenuItem onClick={handleDelete}>Delete Customer</MenuItem>
       </Menu>
     </Box>
-  );
+  ));
 };
 
 export default CustomerManagement;

@@ -1,12 +1,17 @@
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { toast } from "sonner";
+import { ReportData } from "../Interfaces/IReport";
+interface safeData{
+    data:ReportData[];
+    action:string;
+}
 
-const ExcelExport = ({ data, action }) => {
+const ExcelExport = ({ data, action }:safeData) => {
     console.log(data, action, "Data and action in excel utility component");
 
     const exportExcel = () => {
-        if (!data || data.length === 0) {
+        if (!data  === false) {
             toast.error("No data available to export!");
             return;
         }
@@ -34,18 +39,18 @@ const ExcelExport = ({ data, action }) => {
         toast.success(`${action?.toUpperCase()} Report exported as Excel!`);
     };
 
-    const generateSalesSheet = (data) => {
+    const generateSalesSheet = (data:ReportData) => {
         const salesData = [["Total Sales", "Total Orders"], [data.totalSales, data.totalOrders]];
         return XLSX.utils.aoa_to_sheet(salesData);
     };
 
-    const generateItemsSheet = (data) => {
+    const generateItemsSheet = (data:ReportData[]) => {
         const itemData = [["Item Name", "Total Quantity Sold"], ...data.map((item) => [item.itemName, item.totalQuantity])];
         return XLSX.utils.aoa_to_sheet(itemData);
     };
 
-    const generateLedgerSheet = (data) => {
-        const ledgerData = [["Order ID", "Total Price", "Date"], ...data.map((order) => [order.orderId, order.totalPrice, new Date(order.createdAt).toLocaleDateString()])];
+    const generateLedgerSheet = (data:ReportData[]) => {
+        const ledgerData = [["Order ID", "Total Price", "Date"], ...data.map((order) => [order.orderId, order.totalPrice, order.createdAt ? new Date(order.createdAt): "N/A"])];
         return XLSX.utils.aoa_to_sheet(ledgerData);
     };
 

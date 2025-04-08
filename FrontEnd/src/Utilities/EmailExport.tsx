@@ -9,10 +9,11 @@ import {
     DialogTitle,
 } from "@mui/material";
 import { TextField, Button } from "@mui/material";
+import { ReportData } from "../Interfaces/IReport";
 
 interface EmailExportProps {
-    data: any[] | { totalSales: number; totalOrders: number };
-    action: "sales" | "items" | "ledger";
+    data: ReportData[] | { totalSales: number; totalOrders: number|undefined }|undefined;
+    action: string|"sales" | "items" | "ledger";
 }
 
 const EmailExport: React.FC<EmailExportProps> = ({ data, action }) => {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import {
   Box,
   TextField,
@@ -17,19 +17,46 @@ import Navbar from "../../../Components/User/Navbar";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 
+interface Customer {
+  _id: string;
+  name: string;
+}
+
+interface Item {
+  _id: string;
+  itemName: string;
+  price: number;
+  image?: string;
+}
+
+interface OrderItem {
+  item: string;
+  quantity: number;
+  price: number;
+  image?: string;
+  itemId?: string;
+}
+
+interface Errors {
+  [key: string]: string;
+}
+
 const AddOrder = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    customerId: string;
+    items: OrderItem[];
+    totalPrice: number;
+  }>({
     customerId: "",
     items: [{ item: "", quantity: 1, price: 0 }],
     totalPrice: 0,
   });
 
-  const [customers, setCustomers] = useState([]);
-  const [items, setItems] = useState([]);
-  const [errors, setErrors] = useState({});
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [items, setItems] = useState<Item[]>([]);
+  const [errors, setErrors] = useState<Errors>({});
 
-  // Fetch customers based on search input
   const fetchCustomers = async (search: string) => {
     try {
       const response = await axios.get(
@@ -42,7 +69,6 @@ const AddOrder = () => {
     }
   };
 
-  // Fetch items based on search input
   const fetchItems = async (search: string) => {
     try {
       const response = await axios.get(
@@ -54,17 +80,27 @@ const AddOrder = () => {
     }
   };
 
-  // Handle form changes
-  const handleItemChange = (index, updates) => {
+  const handleItemChange = (
+    index: number,
+    updates: Partial<OrderItem> | keyof OrderItem,
+    value?: string | number
+  ) => {
     console.log(formData, "handle change triggered");
 
-    const updatedItems = formData.items.map((item, i) =>
-      i === index ? { ...item, ...updates } : item
-    );
+    let updatedItems;
+
+    if (typeof updates === "string") {
+      updatedItems = formData.items.map((item, i) =>
+        i === index ? { ...item, [updates]: value } : item
+      );
+    } else {
+      updatedItems = formData.items.map((item, i) =>
+        i === index ? { ...item, ...updates } : item
+      );
+    }
 
     console.log(updatedItems, " updsted items");
 
-    // Recalculate total price
     const totalPrice = updatedItems.reduce(
       (sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 0),
       0
@@ -75,7 +111,6 @@ const AddOrder = () => {
     console.log(updatedItems, " form data after handle triggered");
   };
 
-  // Add new item field
   const addItem = () => {
     setFormData({
       ...formData,
@@ -83,15 +118,13 @@ const AddOrder = () => {
     });
   };
 
-  // Remove item field
-  const removeItem = (index) => {
+  const removeItem = (index: number) => {
     const updatedItems = formData.items.filter((_, i) => i !== index);
     setFormData({ ...formData, items: updatedItems });
   };
 
-  // Form validation
   const validateForm = () => {
-    let newErrors = {};
+    let newErrors: Errors = {};
     let isValid = true;
 
     if (!formData.customerId) {
@@ -114,8 +147,7 @@ const AddOrder = () => {
     return isValid;
   };
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validateForm()) return;
 
@@ -123,7 +155,7 @@ const AddOrder = () => {
       const result = await axios.post(OrderEndpoints.addOrder, formData);
       if (result.data.success) {
         toast.success("Order added successfully");
-        // navigate("/orders");
+        navigate("/orders");
       } else {
         toast.error("Failed to add order");
       }
@@ -133,129 +165,6 @@ const AddOrder = () => {
     }
   };
 
-  // return (
-  //   <Box
-  //     sx={{
-  //       maxWidth: 600,
-  //       mx: "auto",
-  //       mt: 5,
-  //       p: 3,
-  //       boxShadow: 3,
-  //       borderRadius: 2,
-  //       backgroundColor: "white",
-  //     }}
-  //   >
-  //     <Navbar />
-  //     <Typography variant="h5" gutterBottom>
-  //       Add New Order
-  //     </Typography>
-  //     <form onSubmit={handleSubmit}>
-  //       {/* Customer Selection */}
-  //       <Autocomplete
-  //         freeSolo
-  //         options={customers}
-  //         getOptionLabel={(option) => option.name || ""}
-  //         onInputChange={(event, newValue) => fetchCustomers(newValue)}
-  //         onChange={(event, newValue) =>
-  //           setFormData({
-  //             ...formData,
-  //             customerId: newValue ? newValue._id : "sample id",
-  //           })
-  //         }
-  //         renderInput={(params) => (
-  //           <TextField
-  //             {...params}
-  //             label="Customer"
-  //             error={!!errors.customerId}
-  //             helperText={errors.customerId}
-  //           />
-  //         )}
-  //       />
-
-  //       {/* Items Selection */}
-  //       {formData.items.map((item, index) => (
-  //         <Box key={index} sx={{ display: "flex", alignItems: "center", gap: 2, my: 1 }}>
-  //           {/* Item Dropdown */}
-  //           <Autocomplete
-  //             freeSolo
-  //             options={items}
-  //             getOptionLabel={(option) => option.itemName || ""}
-  //             onInputChange={(event, newValue) => fetchItems(newValue)}
-  //             // onChange={ (event, newValue) =>
-
-  //             //   {
-  //             //     handleItemChange(index, "item", newValue ? newValue.itemName : "sample item");
-  //             //     handleItemChange(index, "price", newValue ? newValue.price : "dummy price");
-  //             //   }
-  //             // }
-  //             onChange={(event, newValue) => {
-  //               const selectedItem = newValue || { itemName: "sample item", price: "dummy price",itemId:"" };
-
-  //               handleItemChange(index, {
-  //                 itemId:selectedItem._id,
-  //                 item: selectedItem.itemName,
-  //                 price: selectedItem.price,
-  //               });
-  //             }}
-
-  //             sx={{ minWidth: 180 }}
-  //             renderInput={(params) => (
-  //               <TextField
-  //                 {...params}
-  //                 label="Item"
-  //                 error={!!errors[`item-${index}`]}
-  //                 helperText={errors[`item-${index}`]}
-  //               />
-  //             )}
-  //           />
-
-  //           {/* Price Field */}
-  //           <TextField
-  //             type="number"
-  //             label="Price"
-  //             value={item.price || "0"}
-  //             onChange={(e) => handleItemChange(index, "price", e.target.value)}
-  //             sx={{ width: 100 }}
-  //           />
-
-  //           {/* Quantity Field */}
-  //           <TextField
-  //             type="number"
-  //             label="Quantity"
-  //             value={item.quantity}
-  //             onChange={(newValue) => handleItemChange(index, {quantity:newValue})}
-  //             error={!!errors[`quantity-${index}`]}
-  //             helperText={errors[`quantity-${index}`]}
-  //             sx={{ width: 100 }}
-  //           />
-
-  //           {/* Remove Item Button */}
-  //           <IconButton onClick={() => removeItem(index)} color="error">
-  //             <RemoveIcon />
-  //           </IconButton>
-  //         </Box>
-  //       ))}
-
-  //         {/* Price Field */}
-  //         <TextField
-  //             type="number"
-  //             label="totalPrice"
-  //             value={formData.totalPrice || "0"}
-  //              sx={{ width: 100 }}
-  //           />
-
-  //       {/* Add Item Button */}
-  //       <Button startIcon={<AddIcon />} onClick={addItem} variant="contained" sx={{ mt: 2 }}>
-  //         Add Item
-  //       </Button>
-
-  //       {/* Submit Button */}
-  //       <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 3 }}>
-  //         Submit Order
-  //       </Button>
-  //     </form>
-  //   </Box>
-  // );
   return (
     <Box
       sx={{
@@ -273,18 +182,24 @@ const AddOrder = () => {
         Add New Order
       </Typography>
       <form onSubmit={handleSubmit}>
-        {/* Customer Selection */}
         <Autocomplete
           freeSolo
           options={customers}
-          getOptionLabel={(option) => option.name || ""}
-          onInputChange={(event, newValue) => fetchCustomers(newValue)}
-          onChange={(event, newValue) =>
+          getOptionLabel={(option) =>
+            typeof option === "string" ? option : option.name || ""
+          }
+          onInputChange={(_event, newValue) => fetchCustomers(newValue)}
+          onChange={(_event, value) => {
+            const selectedCustomer =
+              typeof value === "object" && value !== null
+                ? value
+                : { _id: "sample id", name: "" }; // fallback dummy Customer
+
             setFormData({
               ...formData,
-              customerId: newValue ? newValue._id : "sample id",
-            })
-          }
+              customerId: selectedCustomer._id,
+            });
+          }}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -295,57 +210,67 @@ const AddOrder = () => {
           )}
         />
 
-        {/* Items Selection */}
+
         {formData.items.map((item, index) => (
           <Box
             key={index}
             sx={{ display: "flex", alignItems: "center", gap: 2, my: 1 }}
           >
-            {/* Item Dropdown */}
             <Autocomplete
               freeSolo
               options={items}
-              getOptionLabel={(option) => option.itemName || "hello"}
-              onInputChange={(event, newValue) => fetchItems(newValue)}
-              onChange={(event, newValue) => {
-                const selectedItem = newValue || {
-                  itemName: "sample item",
-                  price: "dummy price",
-                  itemId: "",
-                  image: "", // Image field added
-                };
+              getOptionLabel={(option) =>
+                typeof option === "string" ? option : option.itemName || "hello"
+              }
+              onInputChange={(_event, newValue) => fetchItems(newValue)}
+              onChange={(
+                _event,
+                value,
+                _reason
+              ) => {
+                const selectedItem =
+                  typeof value === "object" && value !== null
+                    ? value
+                    : {
+                      itemName: "sample item",
+                      price: 0,
+                      _id: "",
+                      image: "",
+                    };
 
                 handleItemChange(index, {
                   itemId: selectedItem._id,
                   item: selectedItem.itemName,
                   price: selectedItem.price,
-                  image: selectedItem.image, // Store image URL
+                  image: selectedItem.image,
                 });
               }}
               sx={{ minWidth: 200 }}
-              // ✅ Custom rendering for options (Item Image + Name)
-              renderOption={(props, option) => (
-                <Box
-                  component="li"
-                  {...props}
-                  sx={{ display: "flex", alignItems: "center", gap: 1, p: 1 }}
-                >
-                  {option.image && (
-                    <Box
-                      component="img"
-                      src={option.image}
-                      alt={option.itemName}
-                      sx={{
-                        width: 30,
-                        height: 30,
-                        borderRadius: 1,
-                        objectFit: "cover",
-                      }}
-                    />
-                  )}
-                  <Typography>{option.itemName}</Typography>
-                </Box>
-              )}
+              renderOption={(props, option) => {
+                const typedOption = option as Item;
+                return (
+                  <Box
+                    component="li"
+                    {...props}
+                    sx={{ display: "flex", alignItems: "center", gap: 1, p: 1 }}
+                  >
+                    {typedOption.image && (
+                      <Box
+                        component="img"
+                        src={typedOption.image}
+                        alt={typedOption.itemName}
+                        sx={{
+                          width: 30,
+                          height: 30,
+                          borderRadius: 1,
+                          objectFit: "cover",
+                        }}
+                      />
+                    )}
+                    <Typography>{typedOption.itemName}</Typography>
+                  </Box>
+                );
+              }}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -356,51 +281,24 @@ const AddOrder = () => {
               )}
             />
 
-            {/* Image Preview */}
-            {item.image && (
-              <Box
-                component="img"
-                src={item.image}
-                alt="Item Image"
-                sx={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 1,
-                  objectFit: "cover",
-                }}
-              />
-            )}
-
-            {/* Price Field */}
-            <TextField
-              type="number"
-              label="Price"
-              value={item.price || "0"}
-              onChange={(e) => handleItemChange(index, "price", e.target.value)}
-              sx={{ width: 100 }}
-            />
-
-            {/* Quantity Field */}
             <TextField
               type="number"
               label="Quantity"
               value={item.quantity}
-              onChange={(e) =>
-                handleItemChange(index, "quantity", e.target.value)
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleItemChange(index, "quantity", Number(e.target.value))
               }
               error={!!errors[`quantity-${index}`]}
               helperText={errors[`quantity-${index}`]}
               sx={{ width: 100 }}
             />
 
-            {/* Remove Item Button */}
             <IconButton onClick={() => removeItem(index)} color="error">
               <RemoveIcon />
             </IconButton>
           </Box>
         ))}
 
-        {/* Total Price Field - Now properly aligned below the items */}
         <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
           <TextField
             type="number"
@@ -411,7 +309,6 @@ const AddOrder = () => {
           />
         </Box>
 
-        {/* Add Item Button */}
         <Button
           startIcon={<AddIcon />}
           onClick={addItem}
@@ -421,7 +318,6 @@ const AddOrder = () => {
           Add Item
         </Button>
 
-        {/* Submit Button */}
         <Button
           type="submit"
           variant="contained"

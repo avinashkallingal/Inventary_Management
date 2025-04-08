@@ -3,7 +3,7 @@ import autoTable from "jspdf-autotable";
 import { toast } from "sonner";
 
 
-const PdfExport = ({data,action}) => {
+const PdfExport = ({data,action}:any) => {
 
     console.log(data, action, "Data and action in pdf utility component");
 

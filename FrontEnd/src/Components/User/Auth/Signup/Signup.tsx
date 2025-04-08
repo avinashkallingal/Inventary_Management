@@ -22,13 +22,28 @@ import { userEndpoints } from "../../../../Constraints/Endpoints/UserEndPoints";
 const defaultTheme = createTheme();
 
 
-interface formData {
-    username: string;
-    phone: string;
-    email: string;
-    address: string;
-    password: string;
+// interface formData {
+//     username: string;
+//     phone: string;
+//     email: string;
+//     address: string;
+//     password: string;
+//   }
+  interface formErrorData {
+    username?: string;
+    phone?: string;
+    email?: string;
+    address?: string;
+    password?: string;
   }
+
+  type FormErrorData = {
+    username?: string;
+    email?: string;
+    password?: string;
+    phone?: string;
+    address?: string;
+  };
   
 
 export default function SignUp() {
@@ -36,13 +51,14 @@ export default function SignUp() {
   const [email, setEmail] = React.useState("");
   const [phone, setPhone] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [errors, setErrors] = React.useState<formData>({
+  const [errors, setErrors] = React.useState<FormErrorData>({
     username: "",
     email: "",
     password: "",
     phone: "",
     address: "",
   });
+  
 
 
   const [isLoading, setIsLoading] = React.useState(false); // Loading status
@@ -62,7 +78,7 @@ export default function SignUp() {
     event.preventDefault();
     toast.info("signup clicked")
     console.log("SignUp clicked")
-    let formErrors: formData = {};
+    let formErrors: formErrorData = {};
     // Validate form fields
     if (!username) formErrors.username = "Username is required";
     if (!email) {
@@ -126,6 +142,10 @@ export default function SignUp() {
   const signin = () => {
     navigate("/");
   };
+  
+  if(isLoading){
+    return(<><h1>Please wait......</h1></>)
+  }
 
 
 
@@ -220,7 +240,7 @@ return (
                 <Typography
                   variant="body2"
                   sx={{ cursor: "pointer", color: "#1976d2" }}
-                  onClick={() => navigate("/")}
+                  onClick={() => signin}
                 >
                   Already have an account? Sign in
                 </Typography>

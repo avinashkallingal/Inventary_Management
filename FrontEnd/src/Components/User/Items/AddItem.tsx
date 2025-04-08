@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Box, TextField, Button, Typography, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import axiosInstance from "../../../Constraints/axios/UserAxios";
+// import axiosInstance from "../../../Constraints/axios/UserAxios";
 import { userEndpoints } from "../../../Constraints/Endpoints/UserEndPoints";
 import { toast } from "sonner";
 import Navbar from "../Navbar";
@@ -113,9 +113,10 @@ const AddItem: React.FC = () => {
       const result = await axios.post(userEndpoints.addItem, formDataToSend);
       console.log(result.data);
     
-      if (result.data.data.success) {
+      if (result.data.success) {
         toast.info("item saved succesfully");
         console.log('item saved succesfully')
+        navigate("/home")
       
      
       } else {

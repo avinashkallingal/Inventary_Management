@@ -4,28 +4,43 @@ import { ReportEndpoints } from "../../../Constraints/Endpoints/ReportEndpoints"
 import Navbar from "../Navbar";
 import { Container, Tabs, Tab, Typography, Box, Paper, TextField, List, ListItem, ListItemText } from "@mui/material";
 import ExportButton from "./Export";
+import { ReportData } from "../../../Interfaces/IReport";
+// interface Data{
+//     totalSales?: number;
+//     totalOrders?: number;
+//     _id?: number;
+//     itemName?: string;
+//     totalQuantity?: number;
+//     price?:number;
+//     image?:string;
+// }
 
 const ReportsPage = () => {
     const [activeTab, setActiveTab] = useState("sales");
-    const [salesReport, setSalesReport] = useState(null);
+    const [salesReport, setSalesReport] = useState<ReportData|null>(null);
     const [itemsReport, setItemsReport] = useState([]);
     const [customerLedger, setCustomerLedger] = useState([]);
     const [customerId, setCustomerId] = useState("");
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<ReportData[]>([]);
     const [action,setAction]=useState("")
+      const [loading,setLoading]=useState<boolean>(true)
 
     useEffect(() => {
         if (activeTab === "sales") {
+            setLoading(true)
             axios.get(`${ReportEndpoints.sales}`).then((res) => {
                 setSalesReport(res.data.report);
                 setData(res.data.report)
                 setAction("sales")
+                setLoading(false)
             });
         } else if (activeTab === "items") {
+            setLoading(true)
             axios.get(`${ReportEndpoints.itemReport}`).then((res) => {
                 setItemsReport(res.data.report);
                 setData(res.data.report)
                 setAction("items")
+                setLoading(false)
             });
         }
     }, [activeTab]);
@@ -39,9 +54,9 @@ const ReportsPage = () => {
             });
         }
     };
-    const reportData = { id: 123, name: "Monthly Sales", date: "2025-03-18" };
+  
 
-    return (
+    return (loading?<><h1>Loading data.....</h1></>:(
         <Container
         sx={{
             width: "800px", // Fixed width
@@ -68,7 +83,7 @@ const ReportsPage = () => {
     >
             <Tabs
                 value={activeTab}
-                onChange={(e, newValue) => setActiveTab(newValue)}
+                onChange={(_,newValue) => setActiveTab(newValue)}
                 indicatorColor="primary"
                 textColor="primary"
                 centered
@@ -91,7 +106,7 @@ const ReportsPage = () => {
                     <Box>
                         <Typography variant="h5">Items Report</Typography>
                         <List>
-                            {itemsReport.map((item) => (
+                            {itemsReport.map((item:ReportData) => (
                                 <ListItem key={item.itemName}>
                                     <ListItemText primary={`${item.itemName}: ${item.totalQuantity} sold`} />
                                 </ListItem>
@@ -112,11 +127,11 @@ const ReportsPage = () => {
                             onBlur={fetchLedger}
                         />
                         <List>
-                            {customerLedger.map((order) => (
+                            {customerLedger.map((order:ReportData) => (
                                 <ListItem key={order.orderId}>
                                     <ListItemText
                                         primary={`Order ID: ${order.orderId}, Total: ${order.totalPrice}`}
-                                        secondary={`Date: ${new Date(order.createdAt).toLocaleDateString()}`}
+                                        secondary={`Date: ${order.createdAt?new Date(order.createdAt).toLocaleDateString():"N/A"}`}
                                     />
                                 </ListItem>
                             ))}
@@ -127,7 +142,7 @@ const ReportsPage = () => {
         </Paper>
     </Container>
     
-    );
+    ));
 };
 
 export default ReportsPage;

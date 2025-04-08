@@ -22,7 +22,7 @@ const transporter = nodemailer.createTransport({
  * @param {string} fileData - Base64-encoded file content.
  * @returns {Promise<{success: boolean, message: string}>}
  */
-export const sendEmailWithAttachment = async (recipient, filename, fileData) => {
+export const sendEmailWithAttachment = async (recipient:string, filename:string, fileData:any) => {
     try {
         const mailOptions = {
             from: emailUser,

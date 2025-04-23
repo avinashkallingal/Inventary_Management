@@ -46,7 +46,7 @@ const Content: React.FC = () => {
     setCurrentPage(newPage);
   };
   //pagination logic ends
-  
+
 
   const handleAddItem = () => {
     navigate("/addItem");
@@ -305,6 +305,7 @@ const Content: React.FC = () => {
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
         <MenuItem onClick={handleEdit}>Edit Item</MenuItem>
         <MenuItem onClick={handleDelete}>Delete Item</MenuItem>
+        
       </Menu>
     </Box>
   ));

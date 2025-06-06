@@ -8,6 +8,7 @@ import itemRouter from '../../interface/routes/itemRoute';
 import customerRouter from '../../interface/routes/customerRoute';
 import orderRouter from '../../interface/routes/orderRoute';
 import reportRouter from '../../interface/routes/reportRoutes';
+import config from '../config/config';
 dotenv.config();
 
 const app = express();
@@ -15,10 +16,10 @@ const app = express();
 const PORT = process.env.PORT || 6000
 
 const corsOptions = {
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    credentials: true,
-}
+  origin: config.FRONTEND_URL, 
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  credentials: true,
+};
 // database connection call
 dbConnection();
 

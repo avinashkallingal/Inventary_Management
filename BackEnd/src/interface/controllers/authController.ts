@@ -22,7 +22,7 @@ export class AuthController {
       if (result.success) {
         res.status(200).json({ success: true, message: result.message });
       } else {
-        res.json({ success: false, message: result.message });
+        res.status(409).json({ success: false, message: result.message });
       }
     } catch (error) {
       console.log("error in the controller", error);

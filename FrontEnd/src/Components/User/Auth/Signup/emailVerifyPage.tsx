@@ -6,6 +6,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Typography from "@mui/material/Typography";
 import axios from "axios";
+import { userEndpoints } from "../../../../Constraints/Endpoints/UserEndPoints";
 
 const EmailVerification: React.FC = () => {
   const location = useLocation();
@@ -22,7 +23,7 @@ const EmailVerification: React.FC = () => {
   const handleVerify = async () => {
     if (!userId) return;
     try {
-      const response = await axios.post("http://localhost:6001/verifyEmail", { id: userId });
+      const response = await axios.post(userEndpoints.verifyEmail, { id: userId });
       alert(response.data.message);
       setOpen(false);
       navigate("/"); // Redirect after verification

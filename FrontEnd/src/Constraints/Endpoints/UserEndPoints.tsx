@@ -16,6 +16,7 @@ export const userEndpoints = {
   resetPassword: `${BACKEND_BASE_URL}/resetPassword`,
   googleLogin: `${BACKEND_BASE_URL}/googleLogin`,
   fetchUserData: `${BACKEND_BASE_URL}/fetchUserData`,
+  
 
 
   searchUsers: `${BACKEND_BASE_URL}/search`,

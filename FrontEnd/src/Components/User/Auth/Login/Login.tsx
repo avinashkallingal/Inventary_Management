@@ -76,16 +76,9 @@ export default function SignIn() {
       if (result.data.success) {
         toast.info("logged in successfully");
 
-        //adding to redux store
-        //   const user = {
-        //     _id: result.data.user_data._id,
-        //     email: result.data.user_data.email,
-        //     name: result.data.user_data.name,
-        //     avatar:""
-        // }
+     
         console.log('Dispatching userlogin action');
-        // dispatch(login({ token: result.data.token, userData: user }));
-        //
+       
         console.log(result.data, " token in fromt end")
         localStorage.setItem("userToken_Inventory", result.data.token.accessToken);
         localStorage.setItem("userRefreshToken_Inventory", result.data.token.refreshToken);

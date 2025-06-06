@@ -29,22 +29,22 @@ const defaultTheme = createTheme();
 //     address: string;
 //     password: string;
 //   }
-  interface formErrorData {
-    username?: string;
-    phone?: string;
-    email?: string;
-    address?: string;
-    password?: string;
-  }
+interface formErrorData {
+  username?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  password?: string;
+}
 
-  type FormErrorData = {
-    username?: string;
-    email?: string;
-    password?: string;
-    phone?: string;
-    address?: string;
-  };
-  
+type FormErrorData = {
+  username?: string;
+  email?: string;
+  password?: string;
+  phone?: string;
+  address?: string;
+};
+
 
 export default function SignUp() {
   const [username, setUsername] = React.useState("");
@@ -58,25 +58,26 @@ export default function SignUp() {
     phone: "",
     address: "",
   });
-  
 
 
-  const [isLoading, setIsLoading] = React.useState(false); // Loading status
- 
+
+  const [isLoading, setIsLoading] = React.useState<boolean>(false); // Loading status
+  const [verify, setVerify] = React.useState<boolean>(false);
 
 
-  
+
+
   const navigate = useNavigate();
   // const isSmallScreen = useMediaQuery(defaultTheme.breakpoints.down("sm"));
 
-  React.useEffect(()=>{
-    
+  React.useEffect(() => {
+
   })
 
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    toast.info("signup clicked")
+    
     console.log("SignUp clicked")
     let formErrors: formErrorData = {};
     // Validate form fields
@@ -92,11 +93,11 @@ export default function SignUp() {
       formErrors.password = "Password must be at least 6 characters long";
     }
     if (!phone) {
-        formErrors.phone = "Phone Number is required";
-      } else if (!/^\d+$/.test(phone) || phone.length < 10) {
-        formErrors.phone = "Enter a valid phone number";
-      }
-   
+      formErrors.phone = "Phone Number is required";
+    } else if (!/^\d+$/.test(phone) || phone.length < 10) {
+      formErrors.phone = "Enter a valid phone number";
+    }
+
 
     // Set errors state if any errors found
     if (Object.keys(formErrors).length > 0) {
@@ -107,34 +108,39 @@ export default function SignUp() {
     setErrors({});
     // Prepare data to send in API request
     setEmail(email.trim());
-    console.log(email," trimmed email in sign up front end2222222222222")
+    console.log(email, " trimmed email in sign up front end2222222222222")
     const data = {
       username,
       email,
       password,
-      phone,      
+      phone,
     };
     try {
       // Make POST request with Axios
       setIsLoading(true)
       const result = await axios.post(userEndpoints.register, data);
       console.log(result.data);
-    
+
       if (result.data.data.success) {
         toast.info("Verify your email");
         // localStorage.setItem("otp", result.data.data.otp);
         setIsLoading(false)
-        navigate("/otp");
+        setVerify(true)
+        // navigate("/otp");
       } else {
         toast.error("email already found");
+        console.log("email already found")
+        setIsLoading(false)
       }
     } catch (error) {
-      console.error("Error duriing signup:", error);
       if (axios.isAxiosError(error)) {
-        console.log("isAxiosError :", error);
+        const msg = error.response?.data?.message || "Signup failed";
+        toast.error(msg);
       } else {
-        console.error("An unexpected error occurred:", error);
+        toast.error("Unexpected error");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -142,15 +148,18 @@ export default function SignUp() {
   const signin = () => {
     navigate("/");
   };
-  
-  if(isLoading){
-    return(<><h1>Please wait......</h1></>)
+
+  if (isLoading) {
+    return (<><h1>please verify from your email</h1></>)
+  }
+   if (verify) {
+    return (<><h2>Please check your email and click on the verification link.</h2></>)
   }
 
 
 
 
-return (
+  return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="sm">
         <CssBaseline />
@@ -246,11 +255,11 @@ return (
                 </Typography>
               </Grid>
             </Grid>
-           
+
           </Box>
         </Box>
-      
-      </Container><br/>
+
+      </Container><br />
       {Copyright("abc")}
     </ThemeProvider>
   );

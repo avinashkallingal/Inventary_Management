@@ -15,11 +15,18 @@ const app = express();
 
 const PORT = process.env.PORT || 6000
 
+// const corsOptions = {
+//   origin: config.FRONTEND_URL, 
+//   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+//   credentials: true,
+// };
+
 const corsOptions = {
-  origin: config.FRONTEND_URL, 
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-  credentials: true,
+  credentials: false, // ✅ now allowed with '*'
 };
+
 // database connection call
 dbConnection();
 

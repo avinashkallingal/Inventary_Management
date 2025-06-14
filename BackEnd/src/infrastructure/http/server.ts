@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 6000
 const corsOptions = {
   origin: "*", 
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-  credentials: true,
+  credentials: false,
 };
 
 
